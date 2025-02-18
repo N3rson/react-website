@@ -1,46 +1,23 @@
-import { useEffect, useState, createContext } from 'react'
-
+import { useState, createContext } from 'react'
+/**
+ * CountriesContext
+ * 
+ * CountriesContext manages and shares country data across components. It allows for a 
+ * streamlined way to provide country information to various parts of the application. CountriesProvider 
+ * encapsulates children components and provides them access to the countries data. It maintains 
+ * the state of the list of countries and a flag to indicate if the countries data has been fetched.
+ *
+ * @author Karol Fryc W21030911 
+ * @generated Comment written with the help of ChatGPT
+ */
 export const CountriesContext = createContext();
 
 export const CountriesProvider = ({ children }) => {
     const [countries, setCountries] = useState([]);
     const [hasFetched, setHasFetched] = useState(false);
 
-    useEffect(() => {
-        if (!hasFetched) {
-            fetchData();
-            setHasFetched(true);
-        }
-    }, [hasFetched]);
-
-    const handleResponse = (response) => {
-        if (response.status === 200) {
-            return response.json();
-        } else {
-            throw new Error("Invalid response: " + response.status);
-        }
-    };
-
-    const handleJSON = (json) => {
-        if (json.constructor === Array) {
-            setCountries(json);
-        } else {
-            throw new Error("Invalid JSON: " + json);
-        }
-    };
-
-    const fetchData = () => { 
-        fetch('https://w21030911.nuwebspace.co.uk/coursework/country')
-        .then(response => handleResponse(response))
-        .then(json => handleJSON(json))
-        .catch(err => {
-            console.log("Error fetching data:", err.message);
-            // Optionally, you can set an error state here to indicate fetching errors
-        });
-    };
-
     return (
-        <CountriesContext.Provider value={{ countries }}>
+        <CountriesContext.Provider value={{ countries, setCountries, hasFetched, setHasFetched }}>
             {children}
         </CountriesContext.Provider>
     );

@@ -1,5 +1,15 @@
-import { useEffect, useState, createContext } from 'react'
-
+import { useState, createContext } from 'react'
+/**
+ * ContentContext
+ * 
+ * ContentContext helps to pass content data through the component tree without 
+ * having to pass props down manually at every level. ContentProvider wraps its children 
+ * and provides the content data to them. It maintains the state of contents, author affiliations, and a flag 
+ * indicating whether the content has been fetched.
+ *
+ * @author Karol Fryc W21030911 
+ * @generated Comment written with the help of ChatGPT
+ */
 export const ContentContext = createContext();
 
 export const ContentProvider = ({ children }) => {
@@ -7,64 +17,8 @@ export const ContentProvider = ({ children }) => {
     const [authorAffiliation, setAuthorAffiliation] = useState([])
     const [hasFetched, setHasFetched] = useState(false);
 
-    useEffect(() => {
-        if (!hasFetched) {
-            fetchData()
-            fetchAuthorData()
-            setHasFetched(true);
-        }
-    }, [hasFetched]);
-
-    const handleResponse = (response) => {
-        if (response.status === 200) {
-            return response.json()
-        } else {
-            throw new Error("invalid response: " + response.status)
-        }
-    }
-     
-    const handleContentJSON = (json) => {
-        if (json.constructor === Array) {
-            setContents(json)
-        } else {
-            throw new Error("invalid JSON: " + json)
-        }
-    }
-
-    const fetchData = () => {
-        const contentEndpoint = 'https://w21030911.nuwebspace.co.uk/coursework/content';
-        fetch(contentEndpoint)
-          .then((response) => handleResponse(response))
-          .then((json) => {
-            handleContentJSON(json);
-          })
-          .catch((err) => {
-            console.log(err.message);
-          });
-      }
-
-      const fetchAuthorData = () => {
-        const authorAffiliationEndpoint = 'https://w21030911.nuwebspace.co.uk/coursework/author-and-affiliation'
-        fetch(authorAffiliationEndpoint)
-          .then((response) => handleResponse(response))
-          .then((json) => {
-            handleAuthorJSON(json);
-          })
-          .catch((err) => {
-            console.log(err.message);
-          });
-      };
-
-      const handleAuthorJSON = (json) => {
-        if (json.constructor === Array) {
-            setAuthorAffiliation(json)
-        } else {
-            throw new Error("invalid JSON: " + json)
-        }
-    }
-
     return (
-        <ContentContext.Provider value={{ contents, authorAffiliation }}>
+        <ContentContext.Provider value={{ contents, setContents, authorAffiliation, setAuthorAffiliation, hasFetched, setHasFetched }}>
             {children}
         </ContentContext.Provider>
     );
